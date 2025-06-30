@@ -58,5 +58,4 @@ Email: karonjivictoria@gmail.com
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/victoria655/student-management-system.git
-   cd student-management-system
+ git@github.com:victoria655/phase4.git

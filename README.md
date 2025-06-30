@@ -29,6 +29,10 @@ Administrators can:
 - Assign activities to students (e.g., sports, music)
 - Track activity-related fees
 - Update payment status for each activity
+- ###  Delete Student Fee Records
+- Allows deletion of specific student fee entries
+- Confirmation modal with student details to prevent accidental deletion
+
 
 ### Future modifications
 
@@ -41,9 +45,6 @@ Administrators can:
   - Total Amount Collected
 - Visualizes fee status distribution using animated charts
 
-###  Delete Student Fee Records
-- Allows deletion of specific student fee entries
-- Confirmation modal with student details to prevent accidental deletion
 
 ---
 

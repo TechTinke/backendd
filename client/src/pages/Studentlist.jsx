@@ -53,35 +53,35 @@ const StudentList = () => {
   };
 
   const confirmDelete = () => {
-    if (!studentToDelete?.id) {
-      setDeleteError("Missing student ID.");
-      return;
-    }
+  if (!studentToDelete?.id) {
+    setDeleteError("Missing student ID.");
+    return;
+  }
 
-    fetch(`http://localhost:5000/students/fees/${studentToDelete.admission_number}/fees`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ student_id: studentToDelete.id }), // This matches your backend expectation
+  fetch(`http://localhost:5000/students/fees/delete_fee_by_student_id/${studentToDelete.id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then(res => {
+      if (!res.ok) {
+        return res.text().then(text => {
+          throw new Error(`Failed to delete student: ${text || res.statusText}`);
+        });
+      }
+      return res.json().catch(() => ({}));
     })
-      .then(res => {
-        if (!res.ok) {
-          return res.text().then(text => {
-            throw new Error(`Failed to delete student: ${text || res.statusText}`);
-          });
-        }
-        return res.json().catch(() => ({}));
-      })
-      .then(() => {
-        const updated = allStudents.filter(s => s.id !== studentToDelete.id);
-        setAllStudents(updated);
-        setStudents(updated);
-        setStudentToDelete(null);
-      })
-      .catch(err => {
-        console.error("Error deleting student:", err);
-        setDeleteError(err.message || "Failed to delete student");
-      });
-  };
+    .then(() => {
+      const updated = allStudents.filter(s => s.id !== studentToDelete.id);
+      setAllStudents(updated);
+      setStudents(updated);
+      setStudentToDelete(null);
+    })
+    .catch(err => {
+      console.error("Error deleting student:", err);
+      setDeleteError(err.message || "Failed to delete student");
+    });
+};
+
 
   const cancelDelete = () => {
     setStudentToDelete(null);

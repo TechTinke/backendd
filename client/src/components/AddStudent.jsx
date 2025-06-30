@@ -19,15 +19,15 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
     e.preventDefault();
     const { firstName, middleName, lastName, admissionNumber, grade } = studentData;
 
-    if (!firstName || !admissionNumber || !grade) {
-      toast.error('First name, admission number, and grade are required');
+    if (!firstName || !middleName || !lastName || !admissionNumber || !grade) {
+      toast.error('All fields are required');
       return;
     }
 
-    const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
-
     const payload = {
-      name: fullName,
+      firstname: firstName,
+      middlename: middleName,
+      lastname: lastName,
       admission_number: admissionNumber,
       grade
     };
@@ -49,9 +49,21 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
       }
 
       const data = await res.json();
-      addStudent({ ...payload, id: data.student_id });
+
+      // Combine full name for local display
+      const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+
+      addStudent({ ...payload, name: fullName, id: data.student_id });
       toast.success('Student added successfully!');
-      setStudentData({ firstName: '', middleName: '', lastName: '', admissionNumber: '', grade: '' });
+
+      setStudentData({
+        firstName: '',
+        middleName: '',
+        lastName: '',
+        admissionNumber: '',
+        grade: ''
+      });
+
       setSelectedStudent(null);
     } catch (err) {
       console.error(err);
@@ -79,6 +91,7 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
             type="text"
             value={studentData.middleName}
             onChange={(e) => handleChange('middleName', e.target.value)}
+            required
           />
         </div>
 
@@ -88,6 +101,7 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
             type="text"
             value={studentData.lastName}
             onChange={(e) => handleChange('lastName', e.target.value)}
+            required
           />
         </div>
 

@@ -1,19 +1,30 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-const FilterStudents = ({ filter, setFilter }) => {
+const FilterActivity = ({ filter, setFilter }) => {
   const [foundStudent, setFoundStudent] = useState(null);
-  const [selectedActivityId, setSelectedActivityId] = useState(null);
+  const [selectedActivityId, setSelectedActivityId] = useState('');
+
+  // Static activities list
+  const activityOptions = [
+    { id: 1, name: 'Drama Club', fee: 1000 },
+    { id: 2, name: 'Music Club', fee: 1200 },
+    { id: 3, name: 'Football Club', fee: 800 },
+    { id: 4, name: 'Chess Club', fee: 600 },
+    { id: 5, name: 'Debate Club', fee: 700 },
+    { id: 6, name: 'Badminton', fee: 900 },
+    { id: 7, name: 'Swimming', fee: 1500 },
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFilter(prev => ({ ...prev, [name]: value }));
+    setFilter((prev) => ({ ...prev, [name]: value }));
   };
 
   const clearFilters = () => {
-    setFilter({ admissionNumber: '', grade: '', amountPaid: '', date: '' });
+    setFilter({ admissionNumber: '', grade: '', amountPaid: '' });
     setFoundStudent(null);
-    setSelectedActivityId(null);
+    setSelectedActivityId('');
   };
 
   const handleSearch = async () => {
@@ -24,22 +35,18 @@ const FilterStudents = ({ filter, setFilter }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/students/fees/${admissionNumber}`);
+      const response = await fetch(
+        `http://localhost:5000/students/activities/student/${admissionNumber}`
+      );
       if (!response.ok) throw new Error('Student not found');
 
       const student = await response.json();
       setFoundStudent(student);
 
-      // Auto-select first activity if any
-      if (student.activity_payments?.length > 0) {
-        setSelectedActivityId(student.activity_payments[0].activity_id);
-      }
-
-      setFilter(prev => ({
+      setFilter((prev) => ({
         ...prev,
         grade: student.grade || '',
         amountPaid: '',
-        date: '',
       }));
 
       toast.success('Student found!');
@@ -51,10 +58,24 @@ const FilterStudents = ({ filter, setFilter }) => {
   };
 
   const handleFeeUpdate = async () => {
-    const { admissionNumber, amountPaid, date } = filter;
+    const { admissionNumber, amountPaid } = filter;
 
-    if (!admissionNumber || !amountPaid || !date || !selectedActivityId) {
+    if (
+      !admissionNumber.trim() ||
+      amountPaid === '' ||
+      selectedActivityId === '' ||
+      isNaN(selectedActivityId)
+    ) {
       toast.warning('All fields including activity are required.');
+      return;
+    }
+
+    const selectedActivity = activityOptions.find(
+      (activity) => activity.id === selectedActivityId
+    );
+
+    if (!selectedActivity) {
+      toast.error('Selected activity not found.');
       return;
     }
 
@@ -66,8 +87,8 @@ const FilterStudents = ({ filter, setFilter }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             activity_id: selectedActivityId,
+            activity_name: selectedActivity.name,
             amount_paid: parseFloat(amountPaid),
-            payment_status: 'partial', // optional, backend can recalculate
           }),
         }
       );
@@ -76,7 +97,7 @@ const FilterStudents = ({ filter, setFilter }) => {
       const result = await response.json();
 
       toast.success(result.message || 'Payment updated successfully!');
-      setFilter(prev => ({ ...prev, amountPaid: '', date: '' }));
+      setFilter((prev) => ({ ...prev, amountPaid: '' }));
     } catch (err) {
       console.error('Payment update error:', err);
       toast.error('Failed to update payment');
@@ -86,7 +107,14 @@ const FilterStudents = ({ filter, setFilter }) => {
   return (
     <div style={{ marginBottom: '1rem' }}>
       {/* Admission Number Search */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', alignItems: 'flex-end' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '1rem',
+          marginBottom: '1rem',
+          alignItems: 'flex-end',
+        }}
+      >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label>Admission No:</label>
           <input
@@ -97,8 +125,12 @@ const FilterStudents = ({ filter, setFilter }) => {
             placeholder="e.g. ADM001"
           />
         </div>
-        <button onClick={handleSearch} style={{ height: '35px' }}>Search</button>
-        <button onClick={clearFilters} style={{ height: '35px' }}>Clear</button>
+        <button onClick={handleSearch} style={{ height: '35px' }}>
+          Search
+        </button>
+        <button onClick={clearFilters} style={{ height: '35px' }}>
+          Clear
+        </button>
       </div>
 
       {/* Student Info and Fee Update Form */}
@@ -131,12 +163,16 @@ const FilterStudents = ({ filter, setFilter }) => {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <label>Activity:</label>
             <select
-              value={selectedActivityId || ''}
-              onChange={(e) => setSelectedActivityId(Number(e.target.value))}
+              value={selectedActivityId}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSelectedActivityId(value === 'none' ? '' : Number(value));
+              }}
             >
-              {foundStudent.activity_payments?.map((activity, idx) => (
-                <option key={idx} value={activity.activity_id}>
-                  {activity.activity_name} — Paid: {activity.amount_paid} / {activity.fee}
+              <option value="none">-- Select Activity --</option>
+              {activityOptions.map((activity) => (
+                <option key={activity.id} value={activity.id}>
+                  {activity.name} : {activity.fee}
                 </option>
               ))}
             </select>
@@ -153,16 +189,6 @@ const FilterStudents = ({ filter, setFilter }) => {
             />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label>Date:</label>
-            <input
-              type="date"
-              name="date"
-              value={filter.date}
-              onChange={handleChange}
-            />
-          </div>
-
           <button
             onClick={handleFeeUpdate}
             style={{ height: '35px', alignSelf: 'flex-end' }}
@@ -175,4 +201,4 @@ const FilterStudents = ({ filter, setFilter }) => {
   );
 };
 
-export default FilterStudents;
+export default FilterActivity;

@@ -1,11 +1,10 @@
 import { motion } from 'framer-motion';
-import FeeStatusButtons from './FeeStatusButtons';
 
 const ActivityTable = ({
-  students = [], 
-  handleDelete,
-  updateStudentFee,
-  calculateDeficit,
+  students = [],
+  handleDelete = () => {},
+  updateStudentFee = () => {},
+  calculateDeficit = () => 'N/A',
 }) => {
   return (
     <div className="table-container">
@@ -18,7 +17,6 @@ const ActivityTable = ({
             <th>Activity</th>
             <th>Amount Paid</th>
             <th>Deficit</th>
-            <th>Fee Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -31,35 +29,14 @@ const ActivityTable = ({
               transition={{ delay: index * 0.05 }}
               className="student-row"
             >
-              <td>{student.student_name}</td>
+              <td>{student.firstname} {student.middlename} {student.lastname}</td>
               <td>{student.admission_number}</td>
               <td>{student.grade}</td>
               <td>{student.activity_name}</td>
-
+              <td>{student.amount_paid || 0}</td>
               <td>
-                <input
-                  type="number"
-                  value={student.amount_paid || 0}
-                  onChange={(e) =>
-                    updateStudentFee(student.admission_number, parseFloat(e.target.value))
-                  }
-                  placeholder="Enter amount"
-                />
+                {calculateDeficit(student.activity_fee, student.amount_paid)}
               </td>
-
-              <td>
-                {calculateDeficit
-                  ? calculateDeficit(student.activity_fee, student.amount_paid)
-                  : 'N/A'}
-              </td>
-
-              <td>
-                <FeeStatusButtons
-                  student={student}
-                  updateStudentFee={updateStudentFee}
-                />
-              </td>
-
               <td>
                 <motion.button
                   whileHover={{ scale: 1.05 }}

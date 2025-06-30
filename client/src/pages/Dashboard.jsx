@@ -7,7 +7,7 @@ import StudentFeeAndActivityForm from '../components/Studentfeeform';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Dashboard = ({ addStudent, deleteStudent, updateStudentFee, updateStudent }) => {
+const Dashboard = () => {
   const [filter, setFilter] = useState({
     admissionNumber: '',
     grade: '',
@@ -99,10 +99,7 @@ const Dashboard = ({ addStudent, deleteStudent, updateStudentFee, updateStudent 
         </motion.div>
         <StudentFeeAndActivityForm/>
         
-        <motion.div 
-          whileHover={{ scale: 1.02 }}
-          className="card filter-card"
-        >
+        <motion.div >
           
         </motion.div>
 

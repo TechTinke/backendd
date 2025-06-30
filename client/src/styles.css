@@ -929,6 +929,143 @@ body {
   border: none;
   border-radius: 6px;
 }
+/* StudentFeeAndActivityForm.css */
+
+.fee-activity-form {
+ 
+  width:800px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.fee-activity-form h2 {
+  text-align: center;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.fee-activity-form h3 {
+  font-size: 1.2rem;
+  color: #444;
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.form-group {
+
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: #555;
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4f46e5;
+  outline: none;
+}
+
+.submit-button {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #4338ca;
+}
+
+hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+.add-student{
+  left: 0px;
+  width:500px;
+  height: 600px;
+}
+.add-student-card{
+height: 600px;
+}
+/* src/pages/Login.css */
+
+.login-form {
+  max-width: 400px;
+  margin: 10vh auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.login-form label {
+  margin-bottom: 0.3rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.login-form input {
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.login-form input:focus {
+  border-color: #4f46e5;
+  outline: none;
+}
+
+.login-form button {
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+  background-color: #4338ca;
+}
 
 
 

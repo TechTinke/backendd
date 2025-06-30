@@ -15,7 +15,6 @@ const StudentList = () => {
     grade: '',
   });
 
-  // Fetch students from backend
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -32,7 +31,6 @@ const StudentList = () => {
     fetchStudents();
   }, []);
 
-  // Apply grade filter
   useEffect(() => {
     if (gradeFilter === '') {
       setStudents(allStudents);
@@ -43,19 +41,27 @@ const StudentList = () => {
   }, [gradeFilter, allStudents]);
 
   const handleDelete = (student) => {
-    setStudentToDelete(student);
+    console.log("Deleting student:", student);
+    setStudentToDelete({
+      id: student.id,
+      firstname: student.firstname,
+      middlename: student.middlename,
+      lastname: student.lastname,
+      admission_number: student.admission_number,
+    });
     setDeleteError(null);
   };
 
   const confirmDelete = () => {
     if (!studentToDelete?.id) {
-      setDeleteError("Invalid student data");
+      setDeleteError("Missing student ID.");
       return;
     }
 
-    fetch(`http://localhost:5000/${studentToDelete.id}`, {
+    fetch(`http://localhost:5000/students/fees/${studentToDelete.admission_number}/fees`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id: studentToDelete.id }), // This matches your backend expectation
     })
       .then(res => {
         if (!res.ok) {
@@ -83,7 +89,7 @@ const StudentList = () => {
   };
 
   const updateStudentFee = (id, amountPaid) => {
-    fetch(`http://localhost:5000/${id}`, {
+    fetch(`http://localhost:5000/students/fees/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amountPaid }),
@@ -102,11 +108,13 @@ const StudentList = () => {
   const DeleteConfirmationModal = ({ student, confirmDelete, cancelDelete, error }) => {
     if (!student) return null;
 
+    const fullName = `${student.firstname || ''} ${student.middlename || ''} ${student.lastname || ''}`.trim();
+
     return (
       <div className="delete-confirmation-overlay">
         <div className="delete-confirmation-modal">
           <h3>Confirm Deletion</h3>
-          <p>Are you sure you want to delete <strong>{`${student.firstName} ${student.middleName || ''} ${student.lastName}`}</strong>'s record?</p>
+          <p>Are you sure you want to delete <strong>{fullName}</strong>'s fee record?</p>
           {error && <p style={{ color: 'red' }}>{error}</p>}
           <div className="modal-buttons">
             <button className="cancel-btn" onClick={cancelDelete}>Cancel</button>
@@ -129,7 +137,7 @@ const StudentList = () => {
       </div>
 
       <div className="student-list-content">
-        <motion.h2 
+        <motion.h2
           initial={{ y: -20 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.3 }}
@@ -137,10 +145,10 @@ const StudentList = () => {
           Student Records ({students.length})
         </motion.h2>
 
-        <FilterStudents 
-          students={students} 
-          setFilter={setFilter} 
-          filter={filter} 
+        <FilterStudents
+          students={students}
+          setFilter={setFilter}
+          filter={filter}
           setSelectedStudent={() => {}} // placeholder
         />
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
-import FilterStudents from '../components/FilterStudents';
+import FilterActivity from '../components/FilterActivity'; // ✅ Use this instead
 import ActivityTable from '../components/ActivityTable';
 
 const StudentActivity = () => {
@@ -11,9 +11,11 @@ const StudentActivity = () => {
   const [filter, setFilter] = useState({
     admissionNumber: '',
     grade: '',
+    amountPaid: '',
+    date: '',
   });
 
-  // Fetch all student activities from Flask API
+  // Fetch student activities
   useEffect(() => {
     const fetchActivities = async () => {
       try {
@@ -30,7 +32,7 @@ const StudentActivity = () => {
     fetchActivities();
   }, []);
 
-  // Filter by grade when filter changes
+  // Filter by grade
   useEffect(() => {
     if (!gradeFilter) {
       setFilteredActivities(activities);
@@ -39,6 +41,21 @@ const StudentActivity = () => {
       setFilteredActivities(filtered);
     }
   }, [gradeFilter, activities]);
+
+  // Placeholder handlers
+  const updateStudentFee = (admissionNumber, newAmount) => {
+    console.log(`Update fee for ${admissionNumber} to ${newAmount}`);
+    // Optional: integrate with backend
+  };
+
+  const calculateDeficit = (fee, paid) => {
+    return fee - (paid || 0);
+  };
+
+  const handleDelete = (student) => {
+    console.log("Delete student activity:", student);
+    // Optional: integrate DELETE API
+  };
 
   return (
     <motion.div
@@ -60,13 +77,17 @@ const StudentActivity = () => {
           Student Activities ({filteredActivities.length})
         </motion.h2>
 
-        <FilterStudents
+        {/* 🔁 Replaces FilterStudents with FilterActivity */}
+        <FilterActivity
           filter={filter}
           setFilter={setFilter}
         />
 
         <ActivityTable
-          activities={filteredActivities}
+          students={filteredActivities}
+          handleDelete={handleDelete}
+          updateStudentFee={updateStudentFee}
+          calculateDeficit={calculateDeficit}
         />
       </div>
     </motion.div>

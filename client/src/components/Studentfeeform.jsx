@@ -2,25 +2,24 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 
-// Define allowed activity options (same as backend)
+// Use correct IDs matching your database
 const ALLOWED_ACTIVITIES = [
-
-    'Drama Club :1000',
-    'Music Club :1200',
-    'Football Club :800',
-    'Chess Club :600',
-    'Debate Club :700',
-    'Badminton :900',
-    'Swimming :1500'
-
+  { id: 4, label: 'Drama Club :1000' },
+  { id: 5, label: 'Music Club :1200' },
+  { id: 6, label: 'Football Club :800' },
+  { id: 7, label: 'Chess Club :600' },
+  { id: 8, label: 'Debate Club :700' },
+  { id: 9, label: 'Badminton :900' },
+  { id: 10, label: 'Swimming :1500' },
 ];
 
 const StudentFeeAndActivityForm = () => {
   const [formData, setFormData] = useState({
     admissionNumber: '',
-    activityName: '',
+    activityId: '',
     activityAmountPaid: '',
     feeAmountPaid: '',
+    feeDate: '', // ✅ Date field added
     paymentStatus: 'pending',
   });
 
@@ -30,9 +29,9 @@ const StudentFeeAndActivityForm = () => {
 
   const handleActivitySubmit = async (e) => {
     e.preventDefault();
-    const { admissionNumber, activityName, activityAmountPaid, paymentStatus } = formData;
+    const { admissionNumber, activityId, activityAmountPaid, paymentStatus } = formData;
 
-    if (!admissionNumber || !activityName || !activityAmountPaid) {
+    if (!admissionNumber || !activityId || !activityAmountPaid) {
       toast.error("Fill all activity fields");
       return;
     }
@@ -42,10 +41,10 @@ const StudentFeeAndActivityForm = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-           Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          activity_id: activityName, // If your backend expects name, ensure it maps correctly
+          activity_id: parseInt(activityId),
           amount_paid: parseFloat(activityAmountPaid),
           payment_status: paymentStatus,
         }),
@@ -62,23 +61,22 @@ const StudentFeeAndActivityForm = () => {
 
   const handleFeeSubmit = async (e) => {
     e.preventDefault();
-    const { admissionNumber, feeAmountPaid } = formData;
+    const { admissionNumber, feeAmountPaid, feeDate } = formData;
 
-    if (!admissionNumber || !feeAmountPaid) {
-      toast.error("Fill admission number and fee amount");
+    if (!admissionNumber || !feeAmountPaid || !feeDate) {
+      toast.error("Fill admission number, amount, and date");
       return;
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/students/${admissionNumber}/fees`, {
+      const res = await fetch(`http://localhost:5000/students/fees/${admissionNumber}/fees`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Authorization: `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
           amount: parseFloat(feeAmountPaid),
-          date: new Date().toISOString(),
+          date: feeDate, // ✅ Use selected date
         }),
       });
 
@@ -109,12 +107,12 @@ const StudentFeeAndActivityForm = () => {
         <div className="form-group">
           <label>Activity:</label>
           <select
-            value={formData.activityName}
-            onChange={e => handleChange('activityName', e.target.value)}
+            value={formData.activityId}
+            onChange={e => handleChange('activityId', e.target.value)}
           >
             <option value="">Select Activity</option>
-            {ALLOWED_ACTIVITIES.map(name => (
-              <option key={name} value={name}>{name}</option>
+            {ALLOWED_ACTIVITIES.map(activity => (
+              <option key={activity.id} value={activity.id}>{activity.label}</option>
             ))}
           </select>
         </div>
@@ -127,8 +125,6 @@ const StudentFeeAndActivityForm = () => {
             onChange={e => handleChange('activityAmountPaid', e.target.value)}
           />
         </div>
-
-       
 
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -149,6 +145,15 @@ const StudentFeeAndActivityForm = () => {
             type="number"
             value={formData.feeAmountPaid}
             onChange={e => handleChange('feeAmountPaid', e.target.value)}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Date of Payment:</label>
+          <input
+            type="date"
+            value={formData.feeDate}
+            onChange={e => handleChange('feeDate', e.target.value)}
           />
         </div>
 

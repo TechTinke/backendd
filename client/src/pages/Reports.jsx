@@ -1,42 +1,30 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const Reports = ({ selectedTerm }) => {
+const Reports = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (selectedTerm) {
-      fetchStudents(selectedTerm);
-    }
-  }, [selectedTerm]);
-
-  const fetchStudents = (term) => {
-    const termEndpoint = {
-      'Term 1': 'http://localhost:5000/students/fees/',
-      'Term 2': 'http://localhost:5000/students/fees/',
-      'Term 3': 'http://localhost:5000/students/fees/',
-    };
-
-    fetch(termEndpoint[term])
-      .then((response) => response.json())
+    fetch('http://localhost:5000/students/fees/')
+      .then((res) => res.json())
       .then((data) => {
         setStudents(data);
         setLoading(false);
       })
-      .catch((error) => {
-        console.error('Error fetching students:', error);
+      .catch((err) => {
+        console.error('Error fetching student data:', err);
         setLoading(false);
       });
-  };
+  }, []);
 
   const paidCount = students.filter((s) => s.feeStatus === 'paid').length;
   const pendingCount = students.filter((s) => s.feeStatus === 'pending').length;
   const partialCount = students.filter((s) => s.feeStatus === 'partial').length;
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  const totalAmountPaid = students.reduce((total, s) => total + (s.amountPaid || 0), 0);
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <motion.div
@@ -45,7 +33,7 @@ const Reports = ({ selectedTerm }) => {
       transition={{ duration: 0.5 }}
       className="reports"
     >
-      <h1>Fee Reports - {selectedTerm}</h1>
+      <h1>Fee Reports</h1>
 
       <div className="stats-grid">
         <motion.div whileHover={{ scale: 1.05 }} className="stat-card total">
@@ -66,6 +54,11 @@ const Reports = ({ selectedTerm }) => {
         <motion.div whileHover={{ scale: 1.05 }} className="stat-card partial">
           <h3>Partial Payments</h3>
           <p>{partialCount}</p>
+        </motion.div>
+
+        <motion.div whileHover={{ scale: 1.05 }} className="stat-card amount">
+          <h3>Total Amount Paid</h3>
+          <p>KES {totalAmountPaid.toLocaleString()}</p>
         </motion.div>
       </div>
 

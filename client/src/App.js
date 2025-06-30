@@ -6,7 +6,7 @@ import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import StudentList from './pages/Studentlist';
 import StudentActivity from './pages/StudentActivity';
-import Login from './pages/Login';
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './styles.css';
@@ -14,38 +14,25 @@ import './styles.css';
 function App() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTerm, setSelectedTerm] = useState('Term 1');
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const savedStudents = localStorage.getItem('students');
-        let studentsData = [];
-
-        if (savedStudents) {
-          studentsData = JSON.parse(savedStudents);
-        } else {
-          const response = await fetch(`http://localhost:5000/students/fees/`);
-          if (!response.ok) throw new Error('Failed to fetch students');
-          studentsData = await response.json();
-          localStorage.setItem('students', JSON.stringify(studentsData));
-        }
-
-        setStudents(studentsData);
+        const response = await fetch('http://localhost:5000/students/fees/');
+        if (!response.ok) throw new Error('Failed to fetch students');
+        const data = await response.json();
+        setStudents(data);
       } catch (err) {
         console.error('Error fetching students:', err);
-        alert('There was an error loading student data. Please try again later.');
+        alert('Error loading student data.');
       } finally {
         setLoading(false);
       }
     };
 
-    if (token) fetchStudents();
-  }, [token]);
+    fetchStudents();
+  }, []);
 
-  const handleTermChange = (term) => setSelectedTerm(term);
-  const handlePendingFees = (term) => console.log('Handling pending fees for', term);
   const addStudent = (newStudent) => setStudents(prev => [...prev, newStudent]);
   const deleteStudent = (id) => setStudents(prev => prev.filter(s => s.id !== id));
 
@@ -69,7 +56,6 @@ function App() {
         body: JSON.stringify({ amountPaid }),
       });
       if (!response.ok) throw new Error('Failed to update');
-      localStorage.setItem('students', JSON.stringify(updatedStudents));
     } catch (err) {
       console.error(err);
       setStudents(students); // Revert
@@ -79,17 +65,6 @@ function App() {
 
   const updateStudent = (updatedStudent) =>
     setStudents(prev => prev.map(s => (s.id === updatedStudent.id ? updatedStudent : s)));
-
-  if (!token) {
-    return (
-      <Router>
-        <Routes>
-          <Route path="*" element={<Login />} />
-        </Routes>
-        <ToastContainer position="top-right" autoClose={3000} />
-      </Router>
-    );
-  }
 
   if (loading) return <div>Loading students...</div>;
 
@@ -108,20 +83,11 @@ function App() {
                   deleteStudent={deleteStudent}
                   updateStudentFee={updateStudentFee}
                   updateStudent={updateStudent}
-               
-                 
-                  handlePendingFees={handlePendingFees}
                 />
               }
             />
-            <Route
-              path="/reports"
-              element={<Reports students={students} selectedTerm={selectedTerm} />}
-            />
-            <Route
-              path="/settings"
-              element={<Settings handleTermChange={handleTermChange} settingsTerm={selectedTerm} />}
-            />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<Settings />} />
             <Route
               path="/studentlist"
               element={
@@ -129,9 +95,6 @@ function App() {
                   students={students}
                   deleteStudent={deleteStudent}
                   updateStudent={updateStudent}
-                  
-                  handleTermChange={handleTermChange}
-                  handlePendingFees={handlePendingFees}
                 />
               }
             />
@@ -142,9 +105,6 @@ function App() {
                   students={students}
                   deleteStudent={deleteStudent}
                   updateStudent={updateStudent}
-                 
-                  handleTermChange={handleTermChange}
-                  handlePendingFees={handlePendingFees}
                 />
               }
             />

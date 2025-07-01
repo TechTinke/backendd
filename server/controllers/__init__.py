@@ -1,0 +1,4 @@
+
+from .studentactivitycontoller import students_activities_bp
+from .studentfeescontoller import students_fees_bp
+from .addstudentcontroller import add_student_bp

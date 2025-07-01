@@ -6,6 +6,8 @@ from models.database import db
 from controllers import students_activities_bp, students_fees_bp, add_student_bp
 from flask_cors import CORS
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 load_dotenv()
 

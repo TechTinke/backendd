@@ -1,5 +1,5 @@
 
-from flask import Blueprint, jsonify,request
+from flask import Blueprint, jsonify, request
 from models.student import Student
 from models.database import db
 from models.activity import Activity

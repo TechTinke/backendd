@@ -1,9 +1,8 @@
 # server/blueprints/students_fees.py
 from flask import Blueprint, jsonify, request
-from models.student import Student
-
 from models.database import db
 from models.fee import Fee
+from models.student import Student
 
 students_fees_bp = Blueprint('students_fees', __name__, url_prefix='/students/fees')
 

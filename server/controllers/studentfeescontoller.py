@@ -1,8 +1,12 @@
-# server/blueprints/students_fees.py
 from flask import Blueprint, jsonify, request
 from models.database import db
 from models.fee import Fee
 from models.student import Student
+import os
+import sys
+
+# Add server directory to Python path
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 students_fees_bp = Blueprint('students_fees', __name__, url_prefix='/students/fees')
 

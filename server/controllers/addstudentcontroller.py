@@ -1,7 +1,11 @@
 from flask import Blueprint, jsonify, request
 from models.student import Student
 from models.database import db
+import os
+import sys
 
+# Add server directory to Python path
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 
 

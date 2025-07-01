@@ -1,9 +1,13 @@
-
 from flask import Blueprint, jsonify, request
 from models.student import Student
 from models.database import db
 from models.activity import Activity
 from models.studentactivity import StudentActivity
+import os
+import sys
+
+# Add server directory to Python path
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 #shiws all students with their activities and payment status
 students_activities_bp = Blueprint('students_activities', __name__, url_prefix='/students/activities')

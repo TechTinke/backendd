@@ -1,4 +1,3 @@
-
-from .studentactivitycontoller import students_activities_bp
-from .studentfeescontoller import students_fees_bp
-from .addstudentcontroller import add_student_bp
+from .students_activities import students_activities_bp
+from .students_fees import students_fees_bp
+from .add_student import add_student_bp

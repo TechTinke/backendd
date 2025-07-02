@@ -1,8 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
-
-
-
-metadata=MetaData()
+metadata = MetaData()
 db = SQLAlchemy()

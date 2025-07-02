@@ -1,10 +1,18 @@
+import os
+import sys
 from datetime import datetime
-from models.database import db
-from models.student import Student
-from models.fee import Fee
-from models.activity import Activity
-from models.studentactivity import StudentActivity
-from app import app
+
+# Add project_root to Python path (parent of server/)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from server.app import create_app
+from server.models.database import db
+from server.models.student import Student
+from server.models.fee import Fee
+from server.models.activity import Activity
+from server.models.studentactivity import StudentActivity
+
+app = create_app()
 
 with app.app_context():
     # Step 1: Clear existing data
@@ -65,19 +73,19 @@ with app.app_context():
             grade=record["grade"],
         )
         db.session.add(student)
-        db.session.flush()  # get student.id
+        db.session.flush()
 
         # Add fees
         db.session.add(Fee(student_id=student.id, amount=4000, date=datetime.utcnow()))
         db.session.add(Fee(student_id=student.id, amount=2000, date=datetime.utcnow()))
 
-        # Add activities (linking via activity_id)
+        # Add activities
         for activity_id in record["activities"]:
             activity = Activity.query.get(activity_id)
             db.session.add(StudentActivity(
                 student_id=student.id,
                 activity_id=activity_id,
-                amount_paid=activity.fee // 2,  # partial payment
+                amount_paid=activity.fee // 2,
                 payment_status="partial"
             ))
 

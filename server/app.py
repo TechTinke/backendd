@@ -17,7 +17,7 @@ def create_app():
     migrate.init_app(app, db)
     CORS(app)
 
-    # Register blueprints with correct imports
+    # Register blueprints
     from server.controllers.students_activities import students_activities_bp
     from server.controllers.students_fees import students_fees_bp
     from server.controllers.add_student import add_student_bp
@@ -26,3 +26,6 @@ def create_app():
     app.register_blueprint(add_student_bp)
 
     return app
+
+# Create the app instance for Gunicorn
+app = create_app()

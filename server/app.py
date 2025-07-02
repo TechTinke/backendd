@@ -17,7 +17,7 @@ def create_app():
     migrate.init_app(app, db)
     CORS(app)
 
-    # Register blueprints
+    # Register blueprints with correct imports
     from server.controllers.students_activities import students_activities_bp
     from server.controllers.students_fees import students_fees_bp
     from server.controllers.add_student import add_student_bp
